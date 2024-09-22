@@ -1,11 +1,13 @@
 "use client";
 import { Category } from "@/types";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 export const FIlterSection = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -24,6 +26,11 @@ export const FIlterSection = () => {
   }, []);
 
   console.log(selectedCategory);
+
+  const handleCategoryChange = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    router.push(`/?category=${categoryName}`);
+  };
 
   return (
     <div className="w-[20%] md:flex hidden bg-gray-100 rounded-xl h-[80vh] fixed p-4 mt-32 flex-col gap-5">
@@ -44,7 +51,7 @@ export const FIlterSection = () => {
         <div className="flex flex-col gap-2">
           <p className="text-gray-500 text-[14px]">Category:</p>
           <select
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => handleCategoryChange(e.target.value)}
             className="p-2 w-full rounded-lg"
             value={selectedCategory}
           >

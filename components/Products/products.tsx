@@ -1,6 +1,8 @@
+"use client";
 import { FoodCard } from "@/components/FoodCard";
 import { Product } from "@/types";
 import axios from "axios";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
@@ -9,6 +11,7 @@ export const Products = () => {
   const observerRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const fetchProducts = async (page: number) => {
@@ -28,8 +31,40 @@ export const Products = () => {
       }
     };
 
-    fetchProducts(page);
-  }, [page]);
+    const fetchCategoryProducts = async (
+      page: number,
+      categoryName: string,
+    ) => {
+      try {
+        setIsLoading(true);
+        const responce = await axios.get(
+          `https://world.openfoodfacts.org/category/${categoryName}.json?page=${page}&page_size=15`,
+        );
+        setProducts((prevProducts) => [
+          ...prevProducts,
+          ...responce.data.products,
+        ]);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (
+      !searchParams.get("category") ||
+      searchParams.get("category") === "All"
+    ) {
+      fetchProducts(page);
+    } else {
+      fetchCategoryProducts(page, searchParams.get("category") as string);
+    }
+  }, [page, searchParams]);
+
+  useEffect(() => {
+    setPage(1);
+    setProducts([]);
+  }, [searchParams]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
