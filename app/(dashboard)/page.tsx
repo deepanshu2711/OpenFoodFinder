@@ -1,21 +1,13 @@
 "use client";
 import { FIlterSection } from "@/components/Filter/filterSection";
-import { FoodCard } from "@/components/FoodCard";
+import { Products } from "@/components/Products/products";
 
 export default function Home() {
   return (
-    <div className="px-10 md:flex items-start hidden">
+    <div className="md:px-10 px-[20px] flex items-start">
       <FIlterSection />
-      <div className="flex flex-col w-[80%] ml-[21%]  gap-10 pl-[20px]">
-        <div className="grid grid-cols-4 gap-5 mt-32">
-          <FoodCard />
-          <FoodCard />
-          <FoodCard />
-          <FoodCard />
-          <FoodCard />
-          <FoodCard />
-          <FoodCard />
-        </div>
+      <div className="flex flex-col md:w-[80%] md:ml-[21%]  gap-10 md:pl-[20px]">
+        <Products />
       </div>
     </div>
   );

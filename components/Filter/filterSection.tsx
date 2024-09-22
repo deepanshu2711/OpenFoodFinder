@@ -26,7 +26,7 @@ export const FIlterSection = () => {
   console.log(selectedCategory);
 
   return (
-    <div className="w-[20%] bg-gray-100 rounded-xl h-[80vh] fixed p-4 mt-32 flex flex-col gap-5">
+    <div className="w-[20%] md:flex hidden bg-gray-100 rounded-xl h-[80vh] fixed p-4 mt-32 flex-col gap-5">
       <p className="text-center text-[20px]  text-gray-700">Filter Products</p>
       <div className="mt-5 flex flex-col gap-5">
         <div className="flex-col flex gap-4">
