@@ -6,7 +6,11 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-export const Products = () => {
+interface ProductProps {
+  filter: "A-Z" | "Z-A";
+}
+
+export const Products = ({ filter }: ProductProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const observerRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(1);
@@ -87,13 +91,26 @@ export const Products = () => {
     };
   }, [isLoading]);
 
+  useEffect(() => {
+    const allProducts = [...products];
+    if (filter === "A-Z") {
+      allProducts.sort((a, b) => a.product_name.localeCompare(b.product_name));
+    } else if (filter === "Z-A") {
+      allProducts.sort((a, b) => b.product_name.localeCompare(a.product_name));
+    }
+
+    setProducts(allProducts);
+  }, [filter]);
+
+  console.log("products selected sort:", filter);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mt-32">
       {products &&
         products.length > 0 &&
-        products.map((product) => (
+        products.map((product, idx) => (
           <FoodCard
-            key={product.id}
+            key={idx}
             name={product.product_name}
             category={product.categories}
             nutritionGrade={product.nutrition_grades}

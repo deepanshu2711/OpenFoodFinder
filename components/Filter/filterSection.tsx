@@ -4,7 +4,16 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-export const FIlterSection = () => {
+
+interface FIlterSectionProps {
+  selectedFilter: "A-Z" | "Z-A";
+  setSelectedFilter: (filter: "A-Z" | "Z-A") => void;
+}
+
+export const FIlterSection = ({
+  selectedFilter,
+  setSelectedFilter,
+}: FIlterSectionProps) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const router = useRouter();
@@ -58,8 +67,8 @@ export const FIlterSection = () => {
             <option value={"All"}>All</option>
             {categories &&
               categories.length > 0 &&
-              categories.map((category) => (
-                <option key={category?.id} value={category?.name}>
+              categories.map((category, idx) => (
+                <option key={idx} value={category?.name}>
                   {category?.name}
                 </option>
               ))}
@@ -67,9 +76,13 @@ export const FIlterSection = () => {
         </div>
         <div className="flex flex-col gap-2">
           <p className="text-gray-500 text-[14px]">Sort:</p>
-          <select className="p-2 w-full rounded-lg">
-            <option>A-Z (Product Name)</option>
-            <option>Z-A (Product Name)</option>
+          <select
+            value={selectedFilter}
+            onChange={(e) => setSelectedFilter(e.target.value as "A-Z" | "Z-A")}
+            className="p-2 w-full rounded-lg"
+          >
+            <option value={"A-Z"}>A-Z (Product Name)</option>
+            <option value={"Z-A"}>Z-A (Product Name)</option>
             <option>Nutrition grade (A-D)</option>
             <option>Nutrition grade (D-A)</option>
           </select>
