@@ -21,7 +21,7 @@ export const FoodCard = ({
         <div className="flex items-center gap-2">
           <MdCategory className="h-4 w-4" />
           <p className="text-gray-500 text-[14px] font-semibold">
-            {category.split(/[, ]+/)[0].slice(0, 10)}
+            {category?.split(/[, ]+/)[0].slice(0, 10)}
           </p>
         </div>
       </div>

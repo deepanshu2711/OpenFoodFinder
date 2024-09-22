@@ -1,24 +1,57 @@
 import { FoodCard } from "@/components/FoodCard";
 import { Product } from "@/types";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 export const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const observerRef = useRef<HTMLDivElement | null>(null);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProducts = async (page: number) => {
       try {
+        setIsLoading(true);
         const responce = await axios.get(
-          "https://world.openfoodfacts.org/products.json?page=1&page_size=15",
+          `https://world.openfoodfacts.org/products.json?page=${page}&page_size=15`,
         );
-        setProducts(responce.data.products);
-        console.log(responce.data.products);
+        setProducts((prevProducts) => [
+          ...prevProducts,
+          ...responce.data.products,
+        ]);
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchProducts();
-  }, []);
+    fetchProducts(page);
+  }, [page]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoading) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1 },
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [isLoading]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mt-32">
       {products &&
@@ -32,6 +65,14 @@ export const Products = () => {
             imageUrl={product.image_url}
           />
         ))}
+      <div ref={observerRef} className="h-10" />
+      {isLoading && (
+        <div
+          className={`flex flex-col p-5 ${page === 1 && "h-[80vh]"} items-center justify-center`}
+        >
+          <AiOutlineLoading3Quarters className=" h-8 w-8 animate-spin" />
+        </div>
+      )}
     </div>
   );
 };
